@@ -1,4 +1,4 @@
-import { generateYAxis } from "@/app/lib/utils";
+// import { generateYAxis } from "@/app/lib/utils";
 // import { fetchRevenue } from "@/app/lib/data";
 
 export default async function Chart() {

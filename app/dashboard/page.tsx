@@ -5,7 +5,7 @@ export default function Page() {
     <div className="flex flex-col gap-2 h-full w-full ">
       <h1 className="text-2xl font-medium">Dashboard</h1>
       <Cards />
-      <h1 className="text-2xl font-medium">Financial Charts</h1>
+      <h1 className="text-2xl font-medium">FinancialCharts</h1>
       <Chart />
     </div>
   );
