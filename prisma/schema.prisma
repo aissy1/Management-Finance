@@ -1,6 +1,5 @@
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
@@ -10,12 +9,12 @@ datasource db {
 }
 
 model Invoices {
-  id        String   @id @default(uuid())
-  Date      DateTime @default(now())
-  Title     String
-  Subject   String
-  amount    Int
-  Status    String
+  id      String   @id @default(uuid())
+  Date    DateTime @default(now())
+  Title   String
+  amount  Int
+  Status  String
+  Subject String
 }
 
 model Revenue {
