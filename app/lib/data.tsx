@@ -1,6 +1,15 @@
 // import { sql } from "@vercel/postgres";
+import prisma from "./prisma";
 
 // import { Revenue } from "./utils";
+
+export async function getData() {
+  return await prisma.invoices.findMany();
+}
+
+// export async function createData(data: { amount: number; title: string }) {
+//   return await prisma.invoices.create({ data });
+// }
 
 // export async function fetchRevenue() {
 //   try {

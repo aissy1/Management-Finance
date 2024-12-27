@@ -1,0 +1,26 @@
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Invoices {
+  id        String   @id @default(uuid())
+  Date      DateTime @default(now())
+  Title     String
+  Subject   String
+  amount    Int
+  Status    String
+}
+
+model Revenue {
+  id     Int      @id @default(autoincrement())
+  title  String
+  amount Float
+  date   DateTime
+}

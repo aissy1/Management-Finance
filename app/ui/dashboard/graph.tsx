@@ -1,14 +1,14 @@
-// import { generateYAxis } from "@/app/lib/utils";
-// import { fetchRevenue } from "@/app/lib/data";
+import { generateYAxis } from "@/app/lib/utils";
+import { fetchData } from "@/app/lib/actions";
 
 export default async function Chart() {
-  //   const revenue = await fetchRevenue();
+  // const {revenue} = await fetchData();
 
-  //   const { yAxisLabels, topLabel } = generateYAxis(revenue);
+  // const { yAxisLabels, topLabel } = generateYAxis(revenue);
 
-  //   if (!revenue || revenue.length === 0) {
-  //     return <p className="mt-4 text-gray-400">No data available.</p>;
-  //   }
+  // if (!revenue || revenue.length === 0) {
+  //   return <p className="mt-4 text-gray-400">No data available.</p>;
+  // }
 
   return (
     <div className="w-full md:col-span-4">
