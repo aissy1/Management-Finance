@@ -10,8 +10,9 @@ export default async function sideNav() {
         className="mb-1 flex h-20 items-end justify-start bg-brown p-2 md:h-40"
         href="/dashboard"
       >
-        <div className="w-32 text-white md:w-40">
-          <BiBarChartAlt className="h-1/3 w-1/3" />
+        <div className="w-32 flex flex-row items-center text-white md:w-40">
+          <BiBarChartAlt className="h-1/4 w-1/4" />
+          <h1 className="text-2xl font-bold pl-2">Example</h1>
         </div>
       </Link>
       <div className="flex grow flex-row justify-center md:flex-col md:space-x-0 md:space-y-2">

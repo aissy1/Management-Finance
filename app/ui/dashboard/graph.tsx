@@ -1,14 +1,12 @@
 "use client";
-import { getGroupedData } from "@/app/lib/actions";
-import dynamic from "next/dynamic";
 import React from "react";
 import { ApexOptions } from "apexcharts";
+import dynamic from "next/dynamic";
 
-// Import Chart hanya di sisi klien
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 interface FinancialChartProps {
-  chartData: { month: Number; amount: number }[];
+  chartData: { month: number; amount: number }[];
 }
 
 const FinancialChart: React.FC<FinancialChartProps> = ({ chartData }) => {
@@ -16,36 +14,47 @@ const FinancialChart: React.FC<FinancialChartProps> = ({ chartData }) => {
     return <div>No data available</div>;
   }
 
+  const currentYear = new Date().getFullYear();
   const categories = chartData.map((item) => `Month ${item.month}`);
   const data = chartData.map((item) => item.amount);
 
   const options: ApexOptions = {
     chart: {
       type: "bar",
-      toolbar: {
-        show: true,
-      },
+      toolbar: { show: false },
     },
     xaxis: {
       categories,
-      title: {
-        text: "Months",
-      },
+      title: { text: "Months", style: { color: "#733E24" } },
     },
     yaxis: {
-      title: {
-        text: "Revenue (Rp)",
-      },
+      title: { text: "Amount (Rp)", style: { color: "#733E24" } },
     },
     title: {
-      text: "Monthly Financial Data",
+      text: `Monthly Bill Amount ${currentYear}`,
       align: "center",
+      style: {
+        color: "#733E24",
+        fontSize: "14px",
+        fontFamily: "inter",
+        fontWeight: "bold",
+      },
+    },
+
+    fill: {
+      colors: ["#733E24"],
+    },
+
+    dataLabels: {
+      style: {
+        colors: ["#F2F0EF"],
+      },
     },
   };
 
   const series = [
     {
-      name: "Revenue",
+      name: "Bill",
       data,
     },
   ];
@@ -57,33 +66,4 @@ const FinancialChart: React.FC<FinancialChartProps> = ({ chartData }) => {
   );
 };
 
-// Fungsi getServerSideProps
-export async function getStaticProps() {
-  const chartData = await getGroupedData();
-  console.log(chartData);
-  return {
-    props: {
-      chartData,
-    },
-    revalidate: 60, // Rebuild halaman setiap 60 detik
-  };
-}
-// Komponen utama
-export default function ChartWrapper({
-  chartData,
-}: {
-  chartData: { month: number; amount: number }[];
-}) {
-  return (
-    <div className="w-full md:col-span-4">
-      <div className="rounded-xl bg-font p-4">
-        <div className="gap-2 rounded-md bg-primary p-4">
-          <FinancialChart chartData={chartData} />
-        </div>
-        <div className="flex items-center pb-2 pt-6">
-          <h3 className="ml-2 text-sm text-gray-500">Last 12 months</h3>
-        </div>
-      </div>
-    </div>
-  );
-}
+export default FinancialChart;

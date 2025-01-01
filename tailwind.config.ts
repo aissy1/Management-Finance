@@ -14,6 +14,9 @@ export default {
         brown: "#733E24",
         font: "#BBBDBC",
       },
+      minHeight: {
+        "48p": "48%",
+      },
     },
   },
   plugins: [],

@@ -1,11 +1,18 @@
-export type Revenue = {
-  month: string;
-  revenue: number;
-};
+export type InvoiceForm = {
+  id: string;
+  Title: string;
+  Subject: string;
+  amount: number;
+  Status: string;
+  Date: Date;
+} | null;
 
-type FinancialChartProps = {
-  data: {
-    categories: string[];
-    data: number[];
+export type State = {
+  errors?: {
+    Title?: string[];
+    Subject?: string[];
+    amount?: string[];
+    status?: string[];
   };
+  message?: string | null;
 };

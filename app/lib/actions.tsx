@@ -1,96 +1,79 @@
+"use server";
 import prisma from "./prisma";
+import { format } from "date-fns";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
-export async function fetchData() {
-  const jumlahTagihan = await prisma.invoices.count();
-  const totaltagihan = await prisma.invoices.aggregate({
-    _sum: {
-      amount: true,
-    },
-  });
-
-  const totalUnpaid = await prisma.invoices.count({
-    where: {
-      Status: "Unpaid",
-    },
-  });
-
-  const totalPaid = await prisma.invoices.count({
-    where: {
-      Status: "Paid",
-    },
-  });
-
-  return {
-    jumlahTagihan,
-    totalPaid,
-    totalUnpaid,
-    totaltagihan: totaltagihan._sum.amount,
-  };
+export async function formattedDate(date: string | Date) {
+  return format(new Date(date), "dd - MM - yyyy");
 }
 
-export async function getGroupedData() {
-  const year = new Date().getFullYear();
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+export async function createForm(formData: FormData) {
+  const newDate = Date.now();
 
-  try {
-    const rawData = await prisma.invoices.findMany({
-      where: {
-        Date: {
-          gte: new Date(`${year}-01-01`),
-          lte: new Date(`${year}-12-31`),
-        },
-      },
-      select: {
-        amount: true,
-        Date: true,
-      },
-    });
+  const title = formData.get("title")?.toString();
+  const subject = formData.get("subject")?.toString();
+  const amount = Number(formData.get("amount"));
+  const status = formData.get("status")?.toString();
+  const dateInput = formData.get("date")?.toString();
 
-    const groupedData = months.map((month) => {
-      const record = rawData.find(
-        (entry) => new Date(entry.Date).getMonth() + 1 === month
-      );
-      return {
-        month,
-        amount: record ? record.amount : 0,
-      };
-    });
+  const date = dateInput ? new Date(dateInput) : new Date(newDate);
 
-    return groupedData;
-  } catch (error) {
-    console.error("Database query failed:", JSON.stringify(error, null, 2));
-    throw error;
+  if (!title || !subject || isNaN(amount) || amount <= 0 || !status) {
+    throw new Error("All fields are required");
   }
+
+  await prisma.invoices.create({
+    data: {
+      Date: date,
+      Title: title,
+      Subject: subject,
+      amount: amount,
+      Status: status,
+    },
+  });
 }
 
-// export default async function getChartData(year: number) {
-//   // Daftar bulan (1 = Januari, 2 = Februari, dst.)
-//   const months = Array.from({ length: 12 }, (_, i) => i + 1);
+export async function editForm(formData: FormData) {
+  const newDate = Date.now();
 
-//   // Ambil data dari database
-//   const rawData = await prisma.invoices.findMany({
-//     where: {
-//       Date: {
-//         gte: new Date(`${year}-01-01`),
-//         lte: new Date(`${year}-12-31`),
-//       },
-//     },
-//     select: {
-//       amount: true,
-//       Date: true,
-//     },
-//   });
+  const id = formData.get("id")?.toString();
+  const title = formData.get("title")?.toString();
+  const subject = formData.get("subject")?.toString();
+  const amount = Number(formData.get("amount"));
+  const status = formData.get("status")?.toString();
+  const dateInput = formData.get("date")?.toString();
 
-//   // Map data ke dalam format dengan 12 bulan
-//   const data = months.map((month) => {
-//     const record = rawData.find(
-//       (entry) => new Date(entry.Date).getMonth() + 1 === month
-//     );
-//     return {
-//       month,
-//       amount: record ? record.amount : 0,
-//     };
-//   });
+  const date = dateInput ? new Date(dateInput) : new Date(newDate);
 
-//   return data;
-// }
+  if (!title || !subject || isNaN(amount) || amount <= 0 || !status) {
+    return "All fields are required";
+  }
+
+  await prisma.invoices.update({
+    where: {
+      id: id,
+    },
+    data: {
+      Date: date,
+      Title: title,
+      Subject: subject,
+      amount: amount,
+      Status: status,
+    },
+  });
+
+  // redirect("/dashboard/invoices");
+  return "Update Success !";
+}
+
+export async function DeleteData(id: string) {
+  await prisma.invoices.delete({
+    where: {
+      id: id,
+    },
+  });
+
+  revalidatePath("/dashboard/invoices");
+}

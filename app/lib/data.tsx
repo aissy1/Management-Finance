@@ -1,31 +1,135 @@
-// import { sql } from "@vercel/postgres";
 import prisma from "./prisma";
 
-// import { Revenue } from "./utils";
+export async function fetchData() {
+  const jumlahTagihan = await prisma.invoices.count();
+  const totaltagihan = await prisma.invoices.aggregate({
+    _sum: {
+      amount: true,
+    },
+  });
+
+  const totalUnpaid = await prisma.invoices.count({
+    where: {
+      Status: "Unpaid",
+    },
+  });
+
+  const totalPaid = await prisma.invoices.count({
+    where: {
+      Status: "Paid",
+    },
+  });
+
+  return {
+    jumlahTagihan,
+    totalPaid,
+    totalUnpaid,
+    totaltagihan: totaltagihan._sum.amount,
+  };
+}
+
+export async function fetchInvoicesByID(id: string) {
+  const invoice = await prisma.invoices.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  // console.log(invoice);
+  return invoice;
+}
 
 export async function getData() {
   return await prisma.invoices.findMany();
 }
 
-// export async function createData(data: { amount: number; title: string }) {
-//   return await prisma.invoices.create({ data });
-// }
+export async function getGroupedData() {
+  const year = new Date().getFullYear();
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
-// export async function fetchRevenue() {
-//   try {
-//     // Artificially delay a response for demo purposes.
-//     // Don't do this in production :)
+  // Ambil data dari database (misalnya tabel invoices)
+  const rawData = await prisma.invoices.findMany({
+    where: {
+      Date: {
+        gte: new Date(`${year}-01-01`),
+        lte: new Date(`${year}-12-31`),
+      },
+    },
+    select: {
+      amount: true,
+      Date: true,
+    },
+  });
 
-//     console.log("Fetching revenue data...");
-//     await new Promise((resolve) => setTimeout(resolve, 3000));
+  // Kelompokkan data per bulan
+  const groupedData = months.map((month) => {
+    const currentYear = new Date().getFullYear();
+    const records = rawData.filter(
+      (entry) =>
+        new Date(entry.Date).getFullYear() === currentYear &&
+        new Date(entry.Date).getMonth() + 1 === month
+    );
 
-//     const data = await sql<Revenue>`SELECT * FROM revenue`;
+    const totalAmount = records.reduce((sum, record) => sum + record.amount, 0);
+    return {
+      month,
+      amount: totalAmount,
+    };
+  });
 
-//     console.log("Data fetch completed after 3 seconds.");
+  return groupedData;
+}
 
-//     return data.rows;
-//   } catch (error) {
-//     console.error("Database Error:", error);
-//     throw new Error("Failed to fetch revenue data.");
-//   }
-// }
+export async function getDataTable() {
+  const data = await prisma.invoices.findMany({
+    orderBy: {
+      Date: "desc",
+    },
+  });
+
+  return data;
+}
+
+const ITEMS_PER_PAGE = 7;
+
+export async function fetchInvoicesData(query: string, currentPage: number) {
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const invoices = await prisma.invoices.findMany({
+      where: {
+        OR: [
+          { Title: { contains: query, mode: "insensitive" } },
+          { Subject: { contains: query, mode: "insensitive" } },
+          { amount: { equals: parseInt(query, 10) || undefined } },
+          { Status: { contains: query, mode: "insensitive" } },
+          ...(isNaN(Date.parse(query))
+            ? []
+            : [{ Date: { equals: new Date(query).toISOString() } }]),
+        ],
+      },
+      orderBy: { Date: "desc" },
+      skip: offset,
+      take: ITEMS_PER_PAGE,
+    });
+
+    return invoices.map((invoice) => ({
+      id: invoice.id,
+      title: invoice.Title,
+      subject: invoice.Subject,
+      amount: invoice.amount,
+      date: invoice.Date ? new Date(invoice.Date).toISOString() : "N/A",
+      status: invoice.Status,
+    }));
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch invoices.");
+  }
+}
+
+export async function fetchInvoicesPages(query: string) {
+  const row = await prisma.invoices.count();
+
+  const totalPages = Math.ceil(Number(row / ITEMS_PER_PAGE));
+  return totalPages;
+}
