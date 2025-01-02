@@ -35,7 +35,6 @@ export async function fetchInvoicesByID(id: string) {
     },
   });
 
-  // console.log(invoice);
   return invoice;
 }
 
