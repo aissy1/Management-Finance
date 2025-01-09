@@ -17,9 +17,9 @@ model Invoices {
   Subject String
 }
 
-model Revenue {
-  id     Int      @id @default(autoincrement())
-  title  String
-  amount Float
-  date   DateTime
+model User {
+  id    Int    @id @default(autoincrement())
+  Email String @unique
+  Pass  String
+  name  String
 }

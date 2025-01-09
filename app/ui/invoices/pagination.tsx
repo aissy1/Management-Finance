@@ -1,6 +1,4 @@
 "use client";
-
-// import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Link from "next/link";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
@@ -8,7 +6,6 @@ import { generatePagination } from "@/app/lib/utils";
 import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Pagination({ totalPages }: { totalPages: number }) {
-  // NOTE: Uncomment this code in Chapter 11
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;

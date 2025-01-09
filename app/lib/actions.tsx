@@ -7,6 +7,31 @@ export async function formattedDate(date: string | Date) {
   return format(new Date(date), "dd - MM - yyyy");
 }
 
+export async function login(formData: FormData) {
+  let message = "";
+
+  const emailUser = formData.get("email")?.toString();
+  const passUser = formData.get("password")?.toString();
+
+  const userData = await prisma.user.findFirst({
+    where: {
+      Email: emailUser,
+    },
+  });
+
+  if (userData?.Email === emailUser) {
+    if (userData?.Pass === passUser) {
+      message = "true";
+    } else {
+      message = "Invalid Password !";
+    }
+  } else {
+    message = "Invalid Email";
+  }
+
+  return { data: userData, message };
+}
+
 export async function createForm(formData: FormData) {
   const newDate = Date.now();
 
@@ -19,7 +44,7 @@ export async function createForm(formData: FormData) {
   const date = dateInput ? new Date(dateInput) : new Date(newDate);
 
   if (!title || !subject || isNaN(amount) || amount <= 0 || !status) {
-    throw new Error("All fields are required");
+    return "All fields are required";
   }
 
   await prisma.invoices.create({
@@ -31,6 +56,7 @@ export async function createForm(formData: FormData) {
       Status: status,
     },
   });
+  return "Create New Data Successful !";
 }
 
 export async function editForm(formData: FormData) {
@@ -62,8 +88,7 @@ export async function editForm(formData: FormData) {
     },
   });
 
-  // redirect("/dashboard/invoices");
-  return "Update Success !";
+  return "Update Successful !";
 }
 
 export async function DeleteData(id: string) {

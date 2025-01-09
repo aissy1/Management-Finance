@@ -29,6 +29,7 @@ export function EditButton({ id }: { id: string }) {
 
 export function DeleteButton({ id }: { id: string }) {
   const deleteRow = DeleteData.bind(null, id);
+
   return (
     <button
       onClick={deleteRow}

@@ -1,9 +1,30 @@
+"use client";
+import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createForm } from "@/app/lib/actions";
+import { useNotification } from "@/app/ui/message";
 
-export default async function CreateForm() {
+export default function CreateForm() {
+  const router = useRouter();
+  const { setMessage } = useNotification();
+
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const formData = new FormData(e.currentTarget);
+    const result = await createForm(formData);
+    setMessage(result);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      router.push("/dashboard/invoices");
+      setMessage("");
+    }, 3000);
+  };
   return (
-    <form action={createForm}>
+    <form onSubmit={handleSubmit}>
       <div className="border-2 border-secondary rounded-md w-full p-2 gap-2">
         <div className="flex flex-col gap-2 p-2">
           <label className="text-xl pl-2 font-medium">Title :</label>
@@ -89,9 +110,10 @@ export default async function CreateForm() {
         </Link>
         <button
           type="submit"
+          disabled={isSubmitting}
           className="border bg-blue-400 px-3 py-1 rounded-md hover:bg-blue-600 text-white text-xl"
         >
-          Submit
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </div>
     </form>

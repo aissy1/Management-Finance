@@ -24,7 +24,7 @@ export async function fetchData() {
     jumlahTagihan,
     totalPaid,
     totalUnpaid,
-    totaltagihan: totaltagihan._sum.amount,
+    totaltagihan: totaltagihan._sum.amount ?? 0,
   };
 }
 
@@ -46,7 +46,6 @@ export async function getGroupedData() {
   const year = new Date().getFullYear();
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
-  // Ambil data dari database (misalnya tabel invoices)
   const rawData = await prisma.invoices.findMany({
     where: {
       Date: {
@@ -60,7 +59,6 @@ export async function getGroupedData() {
     },
   });
 
-  // Kelompokkan data per bulan
   const groupedData = months.map((month) => {
     const currentYear = new Date().getFullYear();
     const records = rawData.filter(
@@ -89,46 +87,48 @@ export async function getDataTable() {
   return data;
 }
 
-const ITEMS_PER_PAGE = 7;
+export async function fetchInvoicesPages(
+  query: string,
+  page: number,
+  itemsPerPage: number
+) {
+  const skip = (page - 1) * itemsPerPage;
 
-export async function fetchInvoicesData(query: string, currentPage: number) {
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  const invoices = await prisma.invoices.findMany({
+    where: {
+      OR: [
+        { Title: { contains: query, mode: "insensitive" } },
+        { Subject: { contains: query, mode: "insensitive" } },
 
-  try {
-    const invoices = await prisma.invoices.findMany({
-      where: {
-        OR: [
-          { Title: { contains: query, mode: "insensitive" } },
-          { Subject: { contains: query, mode: "insensitive" } },
-          { amount: { equals: parseInt(query, 10) || undefined } },
-          { Status: { contains: query, mode: "insensitive" } },
-          ...(isNaN(Date.parse(query))
-            ? []
-            : [{ Date: { equals: new Date(query).toISOString() } }]),
-        ],
-      },
-      orderBy: { Date: "desc" },
-      skip: offset,
-      take: ITEMS_PER_PAGE,
-    });
+        { Status: { contains: query, mode: "insensitive" } },
+      ],
+    },
+    skip,
+    take: itemsPerPage,
+  });
 
-    return invoices.map((invoice) => ({
+  const totalItems = await prisma.invoices.count({
+    where: {
+      OR: [
+        { Title: { contains: query, mode: "insensitive" } },
+        { Subject: { contains: query, mode: "insensitive" } },
+
+        { Status: { contains: query, mode: "insensitive" } },
+      ],
+    },
+  });
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  return {
+    data: invoices.map((invoice) => ({
       id: invoice.id,
       title: invoice.Title,
       subject: invoice.Subject,
       amount: invoice.amount,
-      date: invoice.Date ? new Date(invoice.Date).toISOString() : "N/A",
+      date: invoice.Date ? invoice.Date.toISOString().split("T")[0] : "N/A",
       status: invoice.Status,
-    }));
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch invoices.");
-  }
-}
-
-export async function fetchInvoicesPages(query: string) {
-  const row = await prisma.invoices.count();
-
-  const totalPages = Math.ceil(Number(row / ITEMS_PER_PAGE));
-  return totalPages;
+    })),
+    totalPages,
+  };
 }

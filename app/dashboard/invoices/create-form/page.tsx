@@ -1,7 +1,7 @@
 import Breadcrumbs from "@/app/ui/invoices/nav-form";
 import CreateForm from "@/app/ui/invoices/createform";
 
-export default function Page() {
+export default async function Page() {
   return (
     <div>
       <Breadcrumbs
