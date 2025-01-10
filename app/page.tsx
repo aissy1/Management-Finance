@@ -1,6 +1,6 @@
+import Link from "next/link";
 import { VscCode } from "react-icons/vsc";
 import { RiLoginCircleFill } from "react-icons/ri";
-import Link from "next/link";
 
 export default function Home() {
   return (
