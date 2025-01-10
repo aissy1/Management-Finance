@@ -1,4 +1,4 @@
-import SideNav from "@/app/ui/dashboard/sidenav";
+import SideNav from "@/app/ui/dashboard/SideNav";
 import { NotificationProvider } from "../ui/message";
 export const experimental_ppr = true;
 
