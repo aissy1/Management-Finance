@@ -1,5 +1,5 @@
 "use server";
-import prisma from "./prisma";
+import prisma from "@/app/lib/prisma";
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 
@@ -13,7 +13,7 @@ export async function login(formData: FormData) {
   const emailUser = formData.get("email")?.toString();
   const passUser = formData.get("password")?.toString();
 
-  const userData = await prisma.user.findFirst({
+  const userData = await prisma!.user.findFirst({
     where: {
       Email: emailUser,
     },
@@ -47,6 +47,10 @@ export async function createForm(formData: FormData) {
     return "All fields are required";
   }
 
+  if (!prisma) {
+    throw new Error("Prisma client is not initialized");
+  }
+
   await prisma.invoices.create({
     data: {
       Date: date,
@@ -75,7 +79,7 @@ export async function editForm(formData: FormData) {
     return "All fields are required";
   }
 
-  await prisma.invoices.update({
+  await prisma!.invoices.update({
     where: {
       id: id,
     },
@@ -92,7 +96,7 @@ export async function editForm(formData: FormData) {
 }
 
 export async function DeleteData(id: string) {
-  await prisma.invoices.delete({
+  await prisma!.invoices.delete({
     where: {
       id: id,
     },

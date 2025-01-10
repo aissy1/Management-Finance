@@ -1,6 +1,9 @@
 import prisma from "./prisma";
 
 export async function fetchData() {
+  if (!prisma) {
+    throw new Error("Prisma Client is not initialized");
+  }
   const jumlahTagihan = await prisma.invoices.count();
   const totaltagihan = await prisma.invoices.aggregate({
     _sum: {
@@ -29,7 +32,7 @@ export async function fetchData() {
 }
 
 export async function fetchInvoicesByID(id: string) {
-  const invoice = await prisma.invoices.findUnique({
+  const invoice = await prisma!.invoices.findUnique({
     where: {
       id: id,
     },
@@ -39,14 +42,14 @@ export async function fetchInvoicesByID(id: string) {
 }
 
 export async function getData() {
-  return await prisma.invoices.findMany();
+  return await prisma!.invoices.findMany();
 }
 
 export async function getGroupedData() {
   const year = new Date().getFullYear();
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
-  const rawData = await prisma.invoices.findMany({
+  const rawData = await prisma!.invoices.findMany({
     where: {
       Date: {
         gte: new Date(`${year}-01-01`),
@@ -78,7 +81,7 @@ export async function getGroupedData() {
 }
 
 export async function getDataTable() {
-  const data = await prisma.invoices.findMany({
+  const data = await prisma!.invoices.findMany({
     orderBy: {
       Date: "desc",
     },
@@ -94,7 +97,7 @@ export async function fetchInvoicesPages(
 ) {
   const skip = (page - 1) * itemsPerPage;
 
-  const invoices = await prisma.invoices.findMany({
+  const invoices = await prisma!.invoices.findMany({
     where: {
       OR: [
         { Title: { contains: query, mode: "insensitive" } },
@@ -107,7 +110,7 @@ export async function fetchInvoicesPages(
     take: itemsPerPage,
   });
 
-  const totalItems = await prisma.invoices.count({
+  const totalItems = await prisma!.invoices.count({
     where: {
       OR: [
         { Title: { contains: query, mode: "insensitive" } },

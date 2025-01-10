@@ -1,7 +1,11 @@
-import Cards from "@/app/ui/dashboard/cards";
+// import dynamic from "next/dynamic";
 import { getGroupedData } from "@/app/lib/data";
 import { LuCalendarDays } from "react-icons/lu";
+import Cards from "@/app/ui/dashboard/cards";
 import FinancialChart from "@/app/ui/dashboard/graph";
+
+// const Cards = dynamic(() => import("@/app/ui/dashboard/cards"));
+// const FinancialChart = dynamic(() => import("@/app/ui/dashboard/graph"));
 
 export default async function Page() {
   const chartData = await getGroupedData();

@@ -1,6 +1,11 @@
-import EditForm from "@/app/ui/invoices/edit-form";
+import dynamic from "next/dynamic";
 import { fetchInvoicesByID } from "@/app/lib/data";
-import Breadcrumbs from "@/app/ui/invoices/nav-form";
+// import EditForm from "@/app/ui/invoices/edit-form";
+
+// import Breadcrumbs from "@/app/ui/invoices/nav-form";
+
+const EditForm = dynamic(() => import("@/app/ui/invoices/edit-form"));
+const Breadcrumbs = dynamic(() => import("@/app/ui/invoices/nav-form"));
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;

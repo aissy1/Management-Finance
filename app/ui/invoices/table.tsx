@@ -1,3 +1,4 @@
+"use client";
 import Pagination from "./pagination";
 import { formattedDate } from "@/app/lib/actions";
 import { EditButton, DeleteButton } from "../button";

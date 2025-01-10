@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { VscSignOut } from "react-icons/vsc";
 import { BiBarChartAlt } from "react-icons/bi";
 
-export default function sideNav() {
+export default function SideNav() {
   const router = useRouter();
   const handleSignOut = () => {
     window.sessionStorage.clear();

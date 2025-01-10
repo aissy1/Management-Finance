@@ -1,5 +1,7 @@
-import TableInvoices from "@/app/ui/invoices/table";
+import dynamic from "next/dynamic";
 import { fetchInvoicesPages } from "@/app/lib/data";
+
+const TableInvoices = dynamic(() => import("@/app/ui/invoices/table"));
 
 export default async function Invoices({
   searchParams: searchParamsPromise,
