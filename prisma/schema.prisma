@@ -8,20 +8,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Invoices {
+model invoices {
   id      String   @id @default(uuid())
   Date    DateTime @default(now())
   Title   String
   amount  Int
   Status  String
   Subject String
-   @@map("Invoices")  // Nama tabel di database tetap "Invoices"
 }
 
-model User {
+model user {
   id    Int    @id @default(autoincrement())
   Email String @unique
   Pass  String
   name  String
-   @@map("User")  // Nama tabel di database tetap "Invoices"
 }
