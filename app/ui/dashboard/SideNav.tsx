@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
-import NavLinks from "./nav-links";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { VscSignOut } from "react-icons/vsc";
 import { BiBarChartAlt } from "react-icons/bi";
+import NavLinks from "@/app/ui/dashboard/nav-links";
 
 export default function SideNav() {
   const router = useRouter();

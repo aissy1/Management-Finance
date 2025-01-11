@@ -1,8 +1,5 @@
 import dynamic from "next/dynamic";
 import { fetchInvoicesByID } from "@/app/lib/data";
-// import EditForm from "@/app/ui/invoices/edit-form";
-
-// import Breadcrumbs from "@/app/ui/invoices/nav-form";
 
 const EditForm = dynamic(() => import("@/app/ui/invoices/edit-form"));
 const Breadcrumbs = dynamic(() => import("@/app/ui/invoices/nav-form"));

@@ -1,6 +1,4 @@
 import dynamic from "next/dynamic";
-// import Breadcrumbs from "@/app/ui/invoices/nav-form";
-// import CreateForm from "@/app/ui/invoices/createform";
 
 const Breadcrumbs = dynamic(() => import("@/app/ui/invoices/nav-form"));
 const CreateForm = dynamic(() => import("@/app/ui/invoices/createform"));

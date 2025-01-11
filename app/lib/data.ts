@@ -1,4 +1,4 @@
-import prisma from "./prisma";
+import prisma from "@/app/lib/prisma";
 
 export async function fetchData() {
   if (!prisma) {

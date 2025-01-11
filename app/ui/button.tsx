@@ -1,7 +1,7 @@
-import { MdOutlineModeEditOutline } from "react-icons/md";
-import { FaRegTrashCan } from "react-icons/fa6";
-import { DeleteData } from "../lib/actions";
 import Link from "next/link";
+import { DeleteData } from "@/app/lib/actions";
+import { FaRegTrashCan } from "react-icons/fa6";
+import { MdOutlineModeEditOutline } from "react-icons/md";
 
 export function CreateButton() {
   return (

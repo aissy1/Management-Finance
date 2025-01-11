@@ -7,10 +7,5 @@
   ],
   "env": {
     "DATABASE_URL": "postgresql://neondb_owner:2RNq0efiILcV@ep-fragrant-pine-a12y70rn-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
-  },
-  "build": {
-    "env": {
-      "DATABASE_URL": "postgresql://neondb_owner:2RNq0efiILcV@ep-fragrant-pine-a12y70rn-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
-    }
   }
 }
