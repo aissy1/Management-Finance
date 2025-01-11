@@ -32,7 +32,10 @@ export async function fetchData() {
 }
 
 export async function fetchInvoicesByID(id: string) {
-  const invoice = await prisma!.invoices.findUnique({
+  if (!prisma) {
+    throw new Error("Prisma Client is not initialized");
+  }
+  const invoice = await prisma.invoices.findUnique({
     where: {
       id: id,
     },
@@ -41,15 +44,15 @@ export async function fetchInvoicesByID(id: string) {
   return invoice;
 }
 
-export async function getData() {
-  return await prisma!.invoices.findMany();
-}
-
 export async function getGroupedData() {
+  if (!prisma) {
+    throw new Error("Prisma Client is not initialized");
+  }
+
   const year = new Date().getFullYear();
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
-  const rawData = await prisma!.invoices.findMany({
+  const rawData = await prisma.invoices.findMany({
     where: {
       Date: {
         gte: new Date(`${year}-01-01`),
@@ -81,7 +84,10 @@ export async function getGroupedData() {
 }
 
 export async function getDataTable() {
-  const data = await prisma!.invoices.findMany({
+  if (!prisma) {
+    throw new Error("Prisma Client is not initialized");
+  }
+  const data = await prisma.invoices.findMany({
     orderBy: {
       Date: "desc",
     },
@@ -95,9 +101,13 @@ export async function fetchInvoicesPages(
   page: number,
   itemsPerPage: number
 ) {
+  if (!prisma) {
+    throw new Error("Prisma Client is not initialized");
+  }
+
   const skip = (page - 1) * itemsPerPage;
 
-  const invoices = await prisma!.invoices.findMany({
+  const invoices = await prisma.invoices.findMany({
     where: {
       OR: [
         { Title: { contains: query, mode: "insensitive" } },
@@ -110,7 +120,7 @@ export async function fetchInvoicesPages(
     take: itemsPerPage,
   });
 
-  const totalItems = await prisma!.invoices.count({
+  const totalItems = await prisma.invoices.count({
     where: {
       OR: [
         { Title: { contains: query, mode: "insensitive" } },
